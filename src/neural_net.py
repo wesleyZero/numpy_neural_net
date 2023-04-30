@@ -1,10 +1,6 @@
 import numpy as np
 import pandas as pd 
 from matplotlib import pyplot as plt 
-import deleteMe_test as testCode
-# import tensorflow 		# Dependency for Keras
-# import keras
-
 """
 	-----	
 """
@@ -26,7 +22,7 @@ class neural_net():
 		"""
 		if type(training_data) is not np.array:
 			training_data = np.array(training_data)
-		np.random.shuffle(training_data)
+		# np.random.shuffle(training_data)
 		training_data = training_data.T #Col data is now row data
 		self.y = training_data[0]		#First Row is labels	
 		self.x = training_data[1:] / 255	#Rest of rows is training data
@@ -54,10 +50,6 @@ class neural_net():
 	def deriv_ReLU(Z):
 		return Z > 0
 	
-	# def fast_deriv_ReLU(self):
-		# temp = self.z1 > 0
-		# self.a1 = temp
-
 	@staticmethod
 	def one_hot(Y):
 		one_hot_Y = np.zeros((Y.size, Y.max() + 1))
@@ -78,8 +70,6 @@ class neural_net():
 		a2 = neural_net.softmax(z2)	
 		a2 = np.argmax(a2, 0)
 		return a2
-
-
 
 	def backward_prop(self):
 		m = self.y.size
@@ -107,9 +97,6 @@ class neural_net():
 	def accuracy(predictions, y):
 		return np.sum(predictions == y) / y.size
 
-	# def test_predictions(self):
-		
-	
 	def test_accuracy(self, test_data):
 		return np.sum(self.predict(test_data) == test_data) / test_data.size
 	
@@ -119,7 +106,7 @@ class neural_net():
 			self.backward_prop()
 			self.update_params(alpha)
 			if update == -1: continue #skip flag
-			if i % update == update - 1:
+			if i % update == 0:
 				self.get_predictions()
 				print(f"iteration {i} training acc : {self.get_accuracy()}")
 		
@@ -128,49 +115,19 @@ train_data = pd.read_csv('../assets/MNIST_CSV/train.csv')
 test_data = pd.read_csv('../assets/MNIST_CSV/test.csv')
 test_data = np.array(test_data).T
 
-# nn = neural_net(train_data)
-# nn.gradient_descent(iterations=100, alpha=0.1, update=20)
-# nn.test_accuracy(test_data)
-
+all_time_high = 0
 nn = neural_net(train_data)
-for i in range(10000000):
-	nn.gradient_descent(iterations=200, alpha=0.1, update=-1)
+for i in range(100):
+	nn.gradient_descent(iterations=100, alpha=.1, update=-1)
 	if i > 0: last_test_accuracy = test_accuracy
 	test_accuracy = nn.test_accuracy(test_data)
 	print(f'accuracy = {test_accuracy}')
 	if i > 0 and last_test_accuracy > test_accuracy: 
-		print("max accuracy achieved")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-print("The program ran")
+		if last_test_accuracy > all_time_high:
+			all_time_high = last_test_accuracy
+			print(f'/\nall time high accuracy = {all_time_high}')
+		print(f"\t\t⬇️ accuracy {test_accuracy} ")
+		# nn = neural_net(train_data)	
 
 
 
