@@ -54,9 +54,9 @@ class neural_net():
 	def deriv_ReLU(Z):
 		return Z > 0
 	
-	def fast_deriv_ReLU(self):
-		temp = self.z1 > 0
-		self.a1 = temp
+	# def fast_deriv_ReLU(self):
+		# temp = self.z1 > 0
+		# self.a1 = temp
 
 	@staticmethod
 	def one_hot(Y):
@@ -68,9 +68,16 @@ class neural_net():
 	def forward_prop(self):
 		self.z1 = self.w1.dot(self.x) + self.b1
 		self.a1 = neural_net.ReLU(self.z1)
-		# self.fast_deriv_ReLU()
 		self.z2 = self.w2.dot(self.a1) + self.b2
 		self.a2 = neural_net.softmax(self.z2)
+	
+	def predict(self, test_data):
+		z1 = self.w1.dot(test_data) + self.b1
+		a1 = neural_net.ReLU(z1)
+		z2 = self.w2.dot(a1) + self.b2
+		a2 = neural_net.softmax(z2)	
+		a2 = np.argmax(a2, 0)
+		return a2
 
 
 
@@ -99,25 +106,40 @@ class neural_net():
 	@staticmethod
 	def accuracy(predictions, y):
 		return np.sum(predictions == y) / y.size
+
+	# def test_predictions(self):
+		
+	
+	def test_accuracy(self, test_data):
+		return np.sum(self.predict(test_data) == test_data) / test_data.size
 	
 	def gradient_descent(self, iterations, alpha, update=10):
 		for i in range(iterations):
 			self.forward_prop()
 			self.backward_prop()
 			self.update_params(alpha)
-			if i % update == 0:
+			if update == -1: continue #skip flag
+			if i % update == update - 1:
 				self.get_predictions()
-				print(f"iteration {i} accuracy : {self.get_accuracy()}")
+				print(f"iteration {i} training acc : {self.get_accuracy()}")
 		
 #read
 train_data = pd.read_csv('../assets/MNIST_CSV/train.csv')
 test_data = pd.read_csv('../assets/MNIST_CSV/test.csv')
+test_data = np.array(test_data).T
+
+# nn = neural_net(train_data)
+# nn.gradient_descent(iterations=100, alpha=0.1, update=20)
+# nn.test_accuracy(test_data)
 
 nn = neural_net(train_data)
-nn.gradient_descent(iterations=5000, alpha=0.1, update=20)
-
-
-
+for i in range(10000000):
+	nn.gradient_descent(iterations=200, alpha=0.1, update=-1)
+	if i > 0: last_test_accuracy = test_accuracy
+	test_accuracy = nn.test_accuracy(test_data)
+	print(f'accuracy = {test_accuracy}')
+	if i > 0 and last_test_accuracy > test_accuracy: 
+		print("max accuracy achieved")
 
 
 
