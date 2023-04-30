@@ -50,16 +50,22 @@ class neural_net():
 		bottom = np.sum(np.exp(Z))	
 		return top / bottom
 
-	# def softmax(self):
-	# 	temp = np.exp(self.z2)
-	# 	self.a2 = temp / np.sum(temp)
+	@staticmethod
+	def deriv_ReLU(Z):
+		return Z > 0
+	
+	@staticmethod
+	def one_hot(Y):
+		one_hot_Y = np.zeros((Y.size, Y.max() + 1))
+		one_hot_Y[np.arange(Y.size), Y)] = 1
+		one_hot_Y = one_hot_Y.T
+		return one_hot_Y
 		
 	def forward_prop(self):
 		self.z1 = self.w1.dot(self.x) + self.b1
 		self.a1 = neural_net.ReLU(self.z1)
 		self.z2 = self.w2.dot(self.a1) + self.b2
 		self.a2 = neural_net.softmax(self.z2)
-		print("test")
 
 	def backward_prop(self):
 		# output layer to hidden layer
