@@ -8,54 +8,64 @@ from matplotlib import pyplot as plt
 	-----	
 """
 
-#transpose 
-# train_data = train_data.T		# Each row will be an image
-# train_data = train_data.T		# Each row will be an image 
-
-# m_train, n_train = train_data.shape
-# m_test, n_test = test_data.shape
-
-
-# Train
-# y = train_data[ : , 0]
-# x = train_data[ : , 1:]
-
-# print(y)
-
-
 class neural_net():
+	"""
+		A neural net for image classification of 28x28 images
+
+		The layers will be numbered as followed
+		0 : input later 
+		1 : hidden layer 
+		2 : output later
+	"""
 	def __init__(self, training_data):
 		"""
 		Interpets the datashape as (numOfImages, 1 + numOfPixels) where the 
 		first column is the labeled data
 		"""
-		# if type(dataset) != type(np.array([])):
 		if type(training_data) is not np.array:
 			training_data = np.array(training_data)
 		training_data = training_data.T #Col data is now row data
 		self.y = training_data[0]		#First Row is labels	
-		self.x = training_data[1:]		#Rest of rows is training data
-		self.init_params()
+		self.x = training_data[1:] / 255	#Rest of rows is training data
+		length = len(self.x[0])
+		self.init_params(length)
 
-	def init_params(self):
-		self.w1 = np.random.rand(10, 784)
-		self.b1 = np.random.rand(10, 1)
-		self.w2 = np.random.rand(10, 10)
-		self.b2 = np.random.rand(10, 1)
+	def init_params(self, length):
+		"""
+		Makes a neural network that is 784 -> 10(hidden layer) -> 10 
+		"""
+		self.w1 = np.random.rand(10, 784) - .5
+		self.b1 = np.random.rand(10, 1) - .5
+		self.w2 = np.random.rand(10, 10) - .5
+		self.b2 = np.random.rand(10, 1) - .5
 		return True
 
 	@staticmethod
-	def ReLU(x):
-		return np.maximum(0, x)	
-	
-	def softmax(self):
-		return 
+	def ReLU(Z):
+		return np.maximum(0,Z)
+
+	@staticmethod	
+	def softmax(Z):
+		top = np.exp(Z)
+		bottom = np.sum(np.exp(Z))	
+		return top / bottom
+
+	# def softmax(self):
+	# 	temp = np.exp(self.z2)
+	# 	self.a2 = temp / np.sum(temp)
 		
 	def forward_prop(self):
-		z1 = self.w1.dot(self.x) + self.b1
-		a1 = neural_net.ReLU(z1)
-		z2 = self.w2.dot(a1) + self.b2
-		a2 = neural_net.ReLU(z2)
+		self.z1 = self.w1.dot(self.x) + self.b1
+		self.a1 = neural_net.ReLU(self.z1)
+		self.z2 = self.w2.dot(self.a1) + self.b2
+		self.a2 = neural_net.softmax(self.z2)
+		print("test")
+
+	def backward_prop(self):
+		# output layer to hidden layer
+		self.dz2 = self.a2 - self.y
+		self.dw2 = self.dz2 
+
 
 
 
