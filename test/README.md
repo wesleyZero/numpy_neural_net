@@ -4,3 +4,4 @@
 ```bash
     pytest -v 
 ```
+Note: run cmd from this test directory, not root 
