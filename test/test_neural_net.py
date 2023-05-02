@@ -5,7 +5,7 @@ from numpy_neural_net import neural_net
 import numpy as np
 import pandas as pd
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def	nn_mnist():
 	train_data = pd.read_csv('../assets/MNIST_CSV/train.csv')
 	test_data = pd.read_csv('../assets/MNIST_CSV/test.csv')
@@ -35,13 +35,12 @@ class Test_neural_net():
 		@staticmethod
 		@pytest.mark.xfail
 		def test_ImJustAFailureWaitingToHappen():
-			return False
+			assert False
 
 
 		@staticmethod
 		@pytest.mark.parametrize(
 			('input', 'expected'),
-			# tuple( [(i, 0) for i in range(0, -4, -1)]),
 			((i, 0) for i in range(0, -4, -1) ),
 		)
 		def	test_ReLU(input, expected, nn_mnist): 
