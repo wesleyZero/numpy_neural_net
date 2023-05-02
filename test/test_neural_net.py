@@ -15,22 +15,34 @@ def	nn_obj_fixture():
 
 class Test_neural_net():
 
+		@staticmethod
 		@pytest.mark.parametrize(
 			('input', 'expected'),
-			((i, 0) for i in range(0, -4, -1) ),
+			((i, 0) for i in range(-1, -4, -1) ),
 			)
-		def	test_ReLU_2(self, input, expected):
+		def	test_ReLU_negativeInput(input, expected):
 			assert True if input and not expected else False 			
 		
 		@staticmethod
 		def test_myOwnTest():
 			assert True 
+		
+		@staticmethod	
+		@pytest.mark.skip
+		def test_skipMeFunction():
+			assert False
+		
+		@staticmethod
+		@pytest.mark.xfail
+		def test_ImJustAFailureWaitingToHappen():
+			return False
+
+
 
 @pytest.mark.parametrize(
 	('input', 'expected'),
 	# tuple( [(i, 0) for i in range(0, -4, -1)]),
 	((i, 0) for i in range(0, -4, -1) ),
-
 )
 def	test_ReLU(input, expected, nn_obj_fixture): 
 	assert neural_net.ReLU(input) == expected
